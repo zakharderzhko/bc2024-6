@@ -2,8 +2,13 @@ services:
   note-service:
     build: .
     ports:
-      - "3000:3000"
+      - "3000:3000" 
+      - "9229:9229"
     volumes:
-      - .:/app
-      - /app/node_modules
-    command: ["node", "index.js", "--host", "0.0.0.0", "--port", "3000", "--cache", "./cache"]
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+      - cache:/app/cache 
+    command: nodemon --inspect=0.0.0.0:9229 index.js --host 0.0.0.0 --port 3000 --cache /app/cache
+
+volumes:
+  cache:

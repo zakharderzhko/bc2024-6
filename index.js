@@ -1,4 +1,4 @@
-const { Command } = require('commander');
+const { Command } = require('commander')
 const program = new Command();
 const path = require('path');
 const fs = require('fs');
@@ -85,10 +85,15 @@ app.delete('/notes/:noteName', (req, res) => {
 app.get('/notes', (req, res) => {
     const files = fs.readdirSync(option.cache);
     const notes = files.map(fileName => {
-        const text = fs.readFileSync(path.join(option.cache, fileName), 'utf8');
-        return { name: fileName, text };
-    });
-
+        const filePath = path.join(option.cache, fileName);
+        if (fs.lstatSync(filePath).isFile()) {
+            const text = fs.readFileSync(filePath, 'utf8');
+            return { name: fileName, text };
+        } else {
+            console.log(`Skipping directory: ${fileName}`);
+            return null;  
+        }
+    }).filter(note => note !== null);
     res.json(notes);
 });
 
